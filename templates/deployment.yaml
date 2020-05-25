@@ -1,0 +1,40 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata: 
+  name: "{{ .Values.service.name }}-deployment"
+  namespace: {{ .Values.service.namespace }}
+  labels: 
+    app: {{ .Values.service.name }}
+    type: {{ .Values.service.type }} 
+spec: 
+  replicas: {{ .Values.replicas }} 
+  selector: 
+    matchLabels:
+      app: {{ .Values.service.name }}
+      type: {{ .Values.service.type }} 
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate: 
+         maxSurge: 25% 
+         maxUnavailable: 25%  
+  template: 
+   metadata: 
+     labels: 
+       app: {{ .Values.service.name }}
+       type: {{ .Values.service.type }} 
+   spec: 
+     containers: 
+       - name: {{ .Values.service.name }}
+         image: "{{ .Values.image.image }}:{{ .Values.image.tag }}"
+         resources: 
+           limits: 
+             memory: {{ .Values.limitscontainer.memory }} 
+             cpu: {{ .Values.limitscontainer.cpu }} 
+         ports: 
+          - name: http
+            containerPort: {{ .Values.ports.containerport }}
+            protocol: {{ .Values.ports.protocolport }}
+         readinessProbe: 
+          httpGet: 
+            path: {{ .Values.healthcheck.endpoint }}
+            port: {{ .Values.ports.containerport }}

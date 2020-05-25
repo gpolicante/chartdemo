@@ -1,0 +1,30 @@
+replicas: 1
+
+service: 
+ name: batata
+ namespace: default
+ type: app
+
+
+image:
+  image: httpd
+  tag: latest
+
+ports: 
+ containerport: 80
+ serviceport: 80
+ protocoloport: TCP
+
+healthcheck: 
+ endpoint: /
+
+limitscontainer: 
+  memory: 256Mi
+  cpu: 100m
+
+scalepod: 
+ replicasmin: 1
+ replicasmax: 10
+ percentcpu: 50
+ percentmemory: 60
+
